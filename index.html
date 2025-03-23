@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIAメダルタイム計算ツール</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .calculation-container {
+            overflow-x: auto;
+        }
+        .medal-row {
+            margin-bottom: 10px;
+        }
+        .medal-name {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        .category-description {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .slt-column {
+            min-width: 200px;
+            padding: 0 10px;
+        }
+        .form-check-input {
+            cursor: pointer;
+        }
+        .form-check-label {
+            cursor: pointer;
+        }
+        .medal-gold {
+            border-left: 4px solid gold;
+            padding-left: 10px;
+        }
+        .medal-silver {
+            border-left: 4px solid silver;
+            padding-left: 10px;
+        }
+        .medal-bronze {
+            border-left: 4px solid #cd7f32;
+            padding-left: 10px;
+        }
+        .medal-platinum {
+            border-left: 4px solid #e5e4e2;
+            padding-left: 10px;
+        }
+        .add-column-btn {
+            height: 38px;
+            align-self: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">SIAメダルタイム計算ツール</h2>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="menCheckbox" checked>
+                                <label class="form-check-label" for="menCheckbox">
+                                    <span class="badge bg-primary">男子</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="womenJuniorSeniorMenCheckbox" checked>
+                                <label class="form-check-label" for="womenJuniorSeniorMenCheckbox">
+                                    <span class="badge bg-success">女子・小学生・50歳以上の男子</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="seniorWomenCheckbox" checked>
+                                <label class="form-check-label" for="seniorWomenCheckbox">
+                                    <span class="badge bg-info">50歳以上の女子</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculation-container">
+                    <div class="table-responsive">
+                        <table class="table table-borderless" id="calculationTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 300px;">SLT</th>
+                                    <td>
+                                        <div class="d-flex">
+                                            <div class="slt-inputs d-flex flex-grow-1" id="sltInputsContainer">
+                                                <div class="slt-column" data-column-index="0">
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control slt-input" placeholder="例: 45.50">
+                                                        <button class="btn btn-outline-secondary calculate-btn" type="button">計算</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-success add-column-btn ms-2" id="addColumnBtn">
+                                                <i class="bi bi-plus-lg"></i> 列を追加
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody">
+                                <!-- 金メダル -->
+                                <tr class="medal-header">
+                                    <th class="medal-gold">金</th>
+                                    <td></td>
+                                </tr>
+                                <tr class="men-category">
+                                    <td>
+                                        <div class="category-description">男子（SLTの105％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="gold-men-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="women-junior-senior-men-category">
+                                    <td>
+                                        <div class="category-description">女子・小学生・50歳以上の男子（SLTの110％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="gold-women-junior-senior-men-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="senior-women-category">
+                                    <td>
+                                        <div class="category-description">50歳以上の女子（SLTの115％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="gold-senior-women-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr><td colspan="2" style="height: 20px;"></td></tr>
+
+                                <!-- 銀メダル -->
+                                <tr class="medal-header">
+                                    <th class="medal-silver">銀</th>
+                                    <td></td>
+                                </tr>
+                                <tr class="men-category">
+                                    <td>
+                                        <div class="category-description">男子（SLTの108％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="silver-men-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="women-junior-senior-men-category">
+                                    <td>
+                                        <div class="category-description">女子・小学生・50歳以上の男子（SLTの113％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="silver-women-junior-senior-men-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="senior-women-category">
+                                    <td>
+                                        <div class="category-description">50歳以上の女子（SLTの118％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="silver-senior-women-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr><td colspan="2" style="height: 20px;"></td></tr>
+
+                                <!-- 銅メダル -->
+                                <tr class="medal-header">
+                                    <th class="medal-bronze">銅</th>
+                                    <td></td>
+                                </tr>
+                                <tr class="men-category">
+                                    <td>
+                                        <div class="category-description">男子（SLTの111％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="bronze-men-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="women-junior-senior-men-category">
+                                    <td>
+                                        <div class="category-description">女子・小学生・50歳以上の男子（SLTの116％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="bronze-women-junior-senior-men-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="senior-women-category">
+                                    <td>
+                                        <div class="category-description">50歳以上の女子（SLTの121％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="bronze-senior-women-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr><td colspan="2" style="height: 20px;"></td></tr>
+
+                                <!-- プラチナメダル -->
+                                <tr class="medal-header">
+                                    <th class="medal-platinum">プラチナ</th>
+                                    <td></td>
+                                </tr>
+                                <tr class="men-category">
+                                    <td>
+                                        <div class="category-description">男子（SLTの114％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="platinum-men-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="women-junior-senior-men-category">
+                                    <td>
+                                        <div class="category-description">女子・小学生・50歳以上の男子（SLTの119％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="platinum-women-junior-senior-men-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="senior-women-category">
+                                    <td>
+                                        <div class="category-description">50歳以上の女子（SLTの124％以内）</div>
+                                    </td>
+                                    <td>
+                                        <div class="results-container" id="platinum-senior-women-results">
+                                            <div class="result-column" data-column-index="0">
+                                                <input type="text" class="form-control result-time" readonly>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // メダルデータの定義
+            const medals = [
+                { name: '金', id: 'gold', men: 1.05, womenJuniorSeniorMen: 1.10, seniorWomen: 1.15 },
+                { name: '銀', id: 'silver', men: 1.08, womenJuniorSeniorMen: 1.13, seniorWomen: 1.18 },
+                { name: '銅', id: 'bronze', men: 1.11, womenJuniorSeniorMen: 1.16, seniorWomen: 1.21 },
+                { name: 'プラチナ', id: 'platinum', men: 1.14, womenJuniorSeniorMen: 1.19, seniorWomen: 1.24 }
+            ];
+
+            // カテゴリチェックボックスのイベントリスナー
+            document.getElementById('menCheckbox').addEventListener('change', updateVisibility);
+            document.getElementById('womenJuniorSeniorMenCheckbox').addEventListener('change', updateVisibility);
+            document.getElementById('seniorWomenCheckbox').addEventListener('change', updateVisibility);
+
+            // 列追加ボタンのイベントリスナー
+            document.getElementById('addColumnBtn').addEventListener('click', addNewColumn);
+
+            // 初期状態の計算ボタンにイベントリスナーを追加
+            document.querySelector('.calculate-btn').addEventListener('click', function() {
+                calculateTimes(this.closest('.slt-column'));
+            });
+
+            // 表示/非表示の更新
+            function updateVisibility() {
+                const menVisible = document.getElementById('menCheckbox').checked;
+                const womenJuniorSeniorMenVisible = document.getElementById('womenJuniorSeniorMenCheckbox').checked;
+                const seniorWomenVisible = document.getElementById('seniorWomenCheckbox').checked;
+
+                document.querySelectorAll('.men-category').forEach(row => {
+                    row.style.display = menVisible ? '' : 'none';
+                });
+
+                document.querySelectorAll('.women-junior-senior-men-category').forEach(row => {
+                    row.style.display = womenJuniorSeniorMenVisible ? '' : 'none';
+                });
+
+                document.querySelectorAll('.senior-women-category').forEach(row => {
+                    row.style.display = seniorWomenVisible ? '' : 'none';
+                });
+            }
+
+            // 新しい列を追加
+            function addNewColumn() {
+                // 既存の列数を取得
+                const columnCount = document.querySelectorAll('.slt-column').length;
+                const newColumnIndex = columnCount;
+
+                // SLT入力用の新しい列を追加
+                const sltInputsContainer = document.getElementById('sltInputsContainer');
+                const newColumn = document.createElement('div');
+                newColumn.classList.add('slt-column');
+                newColumn.dataset.columnIndex = newColumnIndex;
+                newColumn.innerHTML = `
+                    <div class="input-group">
+                        <input type="text" class="form-control slt-input" placeholder="例: 45.50">
+                        <button class="btn btn-outline-secondary calculate-btn" type="button">計算</button>
+                    </div>
+                `;
+                sltInputsContainer.appendChild(newColumn);
+
+                // 各結果コンテナに新しい列を追加
+                medals.forEach(medal => {
+                    ['men', 'women-junior-senior-men', 'senior-women'].forEach(category => {
+                        const resultsContainer = document.getElementById(`${medal.id}-${category}-results`);
+                        if (resultsContainer) {
+                            const resultColumn = document.createElement('div');
+                            resultColumn.classList.add('result-column');
+                            resultColumn.dataset.columnIndex = newColumnIndex;
+                            resultColumn.innerHTML = `<input type="text" class="form-control result-time" readonly>`;
+                            resultsContainer.appendChild(resultColumn);
+                        }
+                    });
+                });
+
+                // 新しい計算ボタンにイベントリスナーを追加
+                newColumn.querySelector('.calculate-btn').addEventListener('click', function() {
+                    calculateTimes(newColumn);
+                });
+            }
+
+            // タイムを計算して表示
+            function calculateTimes(column) {
+                const sltInput = column.querySelector('.slt-input');
+                const sltValue = parseFloat(sltInput.value);
+
+                if (isNaN(sltValue) || sltValue <= 0) {
+                    alert('有効なSLT値を入力してください。');
+                    return;
+                }
+
+                // 列のインデックスを取得
+                const columnIndex = parseInt(column.dataset.columnIndex);
+
+                // すべてのメダルについて計算
+                medals.forEach(medal => {
+                    // 男子の結果を計算
+                    const menResultInput = document.querySelector(`#${medal.id}-men-results .result-column[data-column-index="${columnIndex}"] .result-time`);
+                    if (menResultInput) {
+                        menResultInput.value = (sltValue * medal.men).toFixed(2);
+                    }
+
+                    // 女子・小学生・50歳以上の男子の結果を計算
+                    const womenJuniorSeniorMenResultInput = document.querySelector(`#${medal.id}-women-junior-senior-men-results .result-column[data-column-index="${columnIndex}"] .result-time`);
+                    if (womenJuniorSeniorMenResultInput) {
+                        womenJuniorSeniorMenResultInput.value = (sltValue * medal.womenJuniorSeniorMen).toFixed(2);
+                    }
+
+                    // 50歳以上の女子の結果を計算
+                    const seniorWomenResultInput = document.querySelector(`#${medal.id}-senior-women-results .result-column[data-column-index="${columnIndex}"] .result-time`);
+                    if (seniorWomenResultInput) {
+                        seniorWomenResultInput.value = (sltValue * medal.seniorWomen).toFixed(2);
+                    }
+                });
+            }
+
+            // 初期表示の更新
+            updateVisibility();
+        });
+    </script>
+</body>
+</html>
