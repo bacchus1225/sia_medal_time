@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SIAメダルタイム計算ツール</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .medal-table {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .column-container {
+            display: flex;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid p-4">
+        <h1 class="mb-4">SIAメダルタイム計算ツール</h1>
+
+        <div id="columnContainer" class="column-container">
+            <div id="initialColumn" class="card m-2" style="min-width: 300px;">
+                <div class="card-header">
+                    <div class="input-group">
+                        <span class="input-group-text">SLT</span>
+                        <input type="text" class="form-control slt-input" placeholder="例: 20.05">
+                        <button class="btn btn-primary calculate-btn">計算する</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-bordered table-sm medal-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>メダル</th>
+                                <th>SLTのxxx％以内</th>
+                                <th>対象</th>
+                                <th>タイム</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>金</td>
+                                <td>105%</td>
+                                <td rowspan="6">男子</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>銀</td>
+                                <td>115%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>銅</td>
+                                <td>140%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>白</td>
+                                <td>160%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>青</td>
+                                <td>180%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>赤</td>
+                                <td>青メダルタイムを越えたもの</td>
+                                <td>ー</td>
+                            </tr>
+                            <tr>
+                                <td>金</td>
+                                <td>110%</td>
+                                <td rowspan="6">女子・小学生・50歳以上の男子</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>銀</td>
+                                <td>120%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>銅</td>
+                                <td>145%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>白</td>
+                                <td>165%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>青</td>
+                                <td>185%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>赤</td>
+                                <td>青メダルタイムを越えたもの</td>
+                                <td>ー</td>
+                            </tr>
+                            <tr>
+                                <td>金</td>
+                                <td>115%</td>
+                                <td rowspan="6">50歳以上の女子</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>銀</td>
+                                <td>125%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>銅</td>
+                                <td>150%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>白</td>
+                                <td>170%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>青</td>
+                                <td>190%</td>
+                                <td>---</td>
+                            </tr>
+                            <tr>
+                                <td>赤</td>
+                                <td>青メダルタイムを越えたもの</td>
+                                <td>ー</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <button id="addColumnBtn" class="btn btn-success">列を追加する</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const columnContainer = document.getElementById('columnContainer');
+            const addColumnBtn = document.getElementById('addColumnBtn');
+            let columnCounter = 1;
+
+            function calculateMedalTimes(slt, category) {
+                const percentages = {
+                    'male': [105, 115, 140, 160, 180],
+                    'other': [110, 120, 145, 165, 185],
+                    'senior_female': [115, 125, 150, 170, 190]
+                };
+
+                const multipliers = percentages[category] || percentages['other'];
+                return multipliers.map(percentage => {
+                    const time = slt * (percentage / 100);
+                    return time.toFixed(2);
+                });
+            }
+
+            function createColumn(slt = null) {
+                columnCounter++;
+                const newColumn = document.getElementById('initialColumn').cloneNode(true);
+                newColumn.id = `column-${columnCounter}`;
+
+                const inputGroup = newColumn.querySelector('.input-group');
+                const sltInput = newColumn.querySelector('.slt-input');
+                const calculateBtn = newColumn.querySelector('.calculate-btn');
+                const medalRows = newColumn.querySelectorAll('tbody tr');
+
+                // Reset input and times
+                sltInput.value = slt || '';
+                medalRows.forEach(row => {
+                    const timeCell = row.querySelector('td:last-child');
+                    timeCell.textContent = '---';
+                });
+
+                // Calculate Medal Times
+                calculateBtn.addEventListener('click', function() {
+                    const sltValue = parseFloat(sltInput.value);
+                    if (isNaN(sltValue)) return;
+
+                    const categories = [
+                        { selector: 'tbody tr:nth-child(-n+6)', key: 'male' },
+                        { selector: 'tbody tr:nth-child(n+7):nth-child(-n+12)', key: 'other' },
+                        { selector: 'tbody tr:nth-child(n+13)', key: 'senior_female' }
+                    ];
+
+                    categories.forEach(category => {
+                        const medalRows = newColumn.querySelectorAll(category.selector);
+                        const medalTimes = calculateMedalTimes(sltValue, category.key);
+
+                        medalRows.forEach((row, index) => {
+                            const timeCell = row.querySelector('td:last-child');
+                            if (index < 5) {
+                                timeCell.textContent = medalTimes[index];
+                            }
+                        });
+                    });
+                });
+
+                columnContainer.appendChild(newColumn);
+            }
+
+            addColumnBtn.addEventListener('click', () => createColumn());
+
+            // Input event listener for SLT input
+            columnContainer.addEventListener('input', function(e) {
+                if (e.target.classList.contains('slt-input')) {
+                    const parentColumn = e.target.closest('.card');
+                    const medalRows = parentColumn.querySelectorAll('tbody tr');
+                    medalRows.forEach(row => {
+                        const timeCell = row.querySelector('td:last-child');
+                        timeCell.textContent = '---';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

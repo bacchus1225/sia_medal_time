@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SIA メダルタイム計算</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #calculatorColumns {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+        .result-group {
+            flex: 0 0 auto;
+            width: 100%;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center my-4">SIA メダルタイム計算</h1>
+            </div>
+        </div>
+
+        <div id="calculatorColumns" class="row">
+            <!-- 最初の計算結果列 -->
+            <div class="col-12 result-group">
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-header">SLT 入力</div>
+                            <div class="card-body">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control slt-input" placeholder="SLTタイムを入力 (例: 20.05)">
+                                    <button class="btn btn-primary calculate-btn">計算する</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- 男子 -->
+                    <div class="col mb-3">
+                        <div class="card">
+                            <div class="card-header">男子</div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>メダル</th>
+                                            <th>SLTのxxx％以内</th>
+                                            <th>基準タイム</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>金</td>
+                                            <td>105%</td>
+                                            <td class="male-platinum">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>銀</td>
+                                            <td>115%</td>
+                                            <td class="male-gold">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>銅</td>
+                                            <td>140%</td>
+                                            <td class="male-silver">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>白</td>
+                                            <td>160%</td>
+                                            <td class="male-bronze">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>青</td>
+                                            <td>180%</td>
+                                            <td class="male-white">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>赤</td>
+                                            <td>青メダルタイムを越えたもの</td>
+                                            <td class="male-blue">ー</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 女子・小学生・50歳以上の男子 -->
+                    <div class="col mb-3">
+                        <div class="card">
+                            <div class="card-header">女子・小学生・50歳以上の男子</div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>メダル</th>
+                                            <th>SLTのxxx％以内</th>
+                                            <th>基準タイム</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>金</td>
+                                            <td>110%</td>
+                                            <td class="female-old-platinum">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>銀</td>
+                                            <td>120%</td>
+                                            <td class="female-old-gold">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>銅</td>
+                                            <td>145%</td>
+                                            <td class="female-old-silver">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>白</td>
+                                            <td>165%</td>
+                                            <td class="female-old-bronze">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>青</td>
+                                            <td>185%</td>
+                                            <td class="female-old-white">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>赤</td>
+                                            <td>青メダルタイムを越えたもの</td>
+                                            <td class="female-old-blue">ー</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 50歳以上の女子 -->
+                    <div class="col mb-3">
+                        <div class="card">
+                            <div class="card-header">50歳以上の女子</div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>メダル</th>
+                                            <th>SLTのxxx％以内</th>
+                                            <th>基準タイム</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>金</td>
+                                            <td>115%</td>
+                                            <td class="over50-female-platinum">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>銀</td>
+                                            <td>125%</td>
+                                            <td class="over50-female-gold">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>銅</td>
+                                            <td>150%</td>
+                                            <td class="over50-female-silver">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>白</td>
+                                            <td>170%</td>
+                                            <td class="over50-female-bronze">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>青</td>
+                                            <td>190%</td>
+                                            <td class="over50-female-white">---</td>
+                                        </tr>
+                                        <tr>
+                                            <td>赤</td>
+                                            <td>青メダルタイムを越えたもの</td>
+                                            <td class="over50-female-blue">ー</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <button id="addColumnBtn" class="btn btn-secondary">列を追加する</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const calculatorColumns = document.getElementById('calculatorColumns');
+            const addColumnBtn = document.getElementById('addColumnBtn');
+            let columnCounter = 1;
+
+            // メダルタイム計算関数
+            function calculateMedalTimes(slt, type) {
+                const percentages = {
+                    male: [1.05, 1.15, 1.40, 1.60, 1.80],
+                    femaleOld: [1.10, 1.20, 1.45, 1.65, 1.85],
+                    over50Female: [1.15, 1.25, 1.50, 1.70, 1.90]
+                };
+
+                return percentages[type].map(percent => {
+                    const time = parseFloat(slt) * percent;
+                    return time.toFixed(2);
+                });
+            }
+
+            // 計算処理
+            function calculateColumn(resultGroup) {
+                const sltInput = resultGroup.querySelector('.slt-input');
+                const slt = sltInput.value.trim();
+
+                if (slt && !isNaN(parseFloat(slt))) {
+                    // 男子
+                    const maleMedalTimes = calculateMedalTimes(slt, 'male');
+                    resultGroup.querySelectorAll('.male-platinum').forEach(el => el.textContent = maleMedalTimes[0]);
+                    resultGroup.querySelectorAll('.male-gold').forEach(el => el.textContent = maleMedalTimes[1]);
+                    resultGroup.querySelectorAll('.male-silver').forEach(el => el.textContent = maleMedalTimes[2]);
+                    resultGroup.querySelectorAll('.male-bronze').forEach(el => el.textContent = maleMedalTimes[3]);
+                    resultGroup.querySelectorAll('.male-white').forEach(el => el.textContent = maleMedalTimes[4]);
+
+                    // 女子・小学生・50歳以上の男子
+                    const femaleOldMedalTimes = calculateMedalTimes(slt, 'femaleOld');
+                    resultGroup.querySelectorAll('.female-old-platinum').forEach(el => el.textContent = femaleOldMedalTimes[0]);
+                    resultGroup.querySelectorAll('.female-old-gold').forEach(el => el.textContent = femaleOldMedalTimes[1]);
+                    resultGroup.querySelectorAll('.female-old-silver').forEach(el => el.textContent = femaleOldMedalTimes[2]);
+                    resultGroup.querySelectorAll('.female-old-bronze').forEach(el => el.textContent = femaleOldMedalTimes[3]);
+                    resultGroup.querySelectorAll('.female-old-white').forEach(el => el.textContent = femaleOldMedalTimes[4]);
+
+                    // 50歳以上の女子
+                    const over50FemaleMedalTimes = calculateMedalTimes(slt, 'over50Female');
+                    resultGroup.querySelectorAll('.over50-female-platinum').forEach(el => el.textContent = over50FemaleMedalTimes[0]);
+                    resultGroup.querySelectorAll('.over50-female-gold').forEach(el => el.textContent = over50FemaleMedalTimes[1]);
+                    resultGroup.querySelectorAll('.over50-female-silver').forEach(el => el.textContent = over50FemaleMedalTimes[2]);
+                    resultGroup.querySelectorAll('.over50-female-bronze').forEach(el => el.textContent = over50FemaleMedalTimes[3]);
+                    resultGroup.querySelectorAll('.over50-female-white').forEach(el => el.textContent = over50FemaleMedalTimes[4]);
+                }
+            }
+
+            // 列追加イベント
+            addColumnBtn.addEventListener('click', () => {
+                columnCounter++;
+
+                // 最初の計算結果列を複製
+                const firstResultGroup = document.querySelector('.result-group');
+                const newResultGroup = firstResultGroup.cloneNode(true);
+
+                // すべての計算結果を初期化
+                newResultGroup.querySelectorAll('td[class*="-"]').forEach(el => {
+                    el.textContent = '---';
+                });
+
+                // SLTのテキストボックスをクリア
+                newResultGroup.querySelector('.slt-input').value = '';
+
+                // 計算ボタンにイベントリスナーを追加
+                const calculateBtn = newResultGroup.querySelector('.calculate-btn');
+                calculateBtn.addEventListener('click', () => {
+                    calculateColumn(newResultGroup);
+                });
+
+                // 新しい列を追加
+                calculatorColumns.appendChild(newResultGroup);
+
+                // 横スクロールを一番右に移動
+                calculatorColumns.scrollLeft = calculatorColumns.scrollWidth;
+            });
+
+            // 初期の計算ボタンにイベントリスナーを追加
+            document.querySelector('.calculate-btn').addEventListener('click', () => {
+                calculateColumn(document.querySelector('.result-group'));
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
