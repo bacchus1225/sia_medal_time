@@ -78,10 +78,15 @@
                 tableHtml += `<table class='table table-bordered'><thead><tr><th>メダル</th><th>％</th><th>基準タイム</th></tr></thead><tbody>`;
                 categories[category].forEach(([medal, icon, percent], index) => {
                     tableHtml += `<tr>
-                        <td><i class='fas ${icon} medal-icon'></i><span class='${icon.split(' ')[1]}'>${medal}</span></td>
+                        <td><i class='fas ${icon} medal-icon'></i><span>${medal}</span></td>
                         <td>${(percent * 100).toFixed(0)}%</td>
                         <td id='${category}-${index}-${columnIndex}'>---</td>
                     </tr>`;
+                    // tableHtml += `<tr>
+                    //     <td><i class='fas ${icon} medal-icon'></i><span class='${icon.split(' ')[1]}'>${medal}</span></td>
+                    //     <td>${(percent * 100).toFixed(0)}%</td>
+                    //     <td id='${category}-${index}-${columnIndex}'>---</td>
+                    // </tr>`;
                 });
                 tableHtml += "</tbody></table></div>";
             });
