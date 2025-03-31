@@ -30,6 +30,12 @@
             border-radius: 8px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
+        .rounding-options {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
 
         /*
             「列を追加する」ボタンの表示制御
@@ -58,15 +64,35 @@
                 '女子・小学生・50歳以上の男子': [1.10, 1.20, 1.45, 1.65, 1.85],
                 '50歳以上の女子': [1.15, 1.25, 1.50, 1.70, 1.90]
             };
+
+            // 小数点以下の取り扱い方法を取得
+            let roundingMethod = document.querySelector('input[name="rounding"]:checked').value;
+
             if (!isNaN(sltValue)) {
                 Object.keys(percentages).forEach((category, index) => {
                     percentages[category].forEach((factor, rowIndex) => {
-                        let time = (sltValue * factor).toFixed(2);
-                        document.getElementById(`${category}-${rowIndex}-${columnIndex}`).innerText = time;
+                        let time = sltValue * factor;
+
+                        // 選択された丸め方法に基づいて値を処理
+                        switch(roundingMethod) {
+                            case 'floor':
+                                time = Math.floor(time * 100) / 100; // 小数点以下2桁で切り捨て
+                                break;
+                            case 'round':
+                                time = Math.round(time * 100) / 100; // 小数点以下2桁で四捨五入
+                                break;
+                            case 'ceil':
+                                time = Math.ceil(time * 100) / 100; // 小数点以下2桁で切り上げ
+                                break;
+                        }
+
+                        // 常に小数点以下2桁を表示
+                        document.getElementById(`${category}-${rowIndex}-${columnIndex}`).innerText = time.toFixed(2);
                     });
                 });
             }
         }
+
         function addColumn() {
             let columns = document.querySelectorAll(".slt-column").length;
             let newIndex = columns + 1;
@@ -87,6 +113,7 @@
             `;
             container.appendChild(newColumn);
         }
+
         function generateTable(columnIndex) {
             let categories = {
                 '男子': [["金", "fa-medal gold", 1.05], ["銀", "fa-medal silver", 1.15], ["銅", "fa-medal bronze", 1.40], ["白", "fa-medal white", 1.60], ["青", "fa-medal blue", 1.80]],
@@ -112,6 +139,24 @@
 </head>
 <body class="container py-4">
     <h1 class="mb-4">SIAメダルタイム計算</h1>
+
+    <!-- 小数点以下の取り扱いを制御するラジオボタン -->
+    <div class="rounding-options">
+        <label class="form-label me-3">小数点以下</label>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="rounding" id="floor" value="floor">
+            <label class="form-check-label" for="floor">切り捨て</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="rounding" id="round" value="round" checked>
+            <label class="form-check-label" for="round">四捨五入</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="rounding" id="ceil" value="ceil">
+            <label class="form-check-label" for="ceil">切り上げ</label>
+        </div>
+    </div>
+
     <div class="row" id="columns">
         <div class="col slt-column">
             <div class="d-flex align-items-center mb-2">
@@ -121,7 +166,7 @@
                 <button class="btn btn-secondary ms-auto add-column-button" onclick="addColumn()">
                     列を追加する
                 </button>
-                </div>
+            </div>
             <div id="table-container-1">
                 <script>document.write(generateTable(1));</script>
             </div>
