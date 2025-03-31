@@ -30,6 +30,24 @@
             border-radius: 8px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
+
+        /*
+            「列を追加する」ボタンの表示制御
+            - 計算エリアが2つ以上あるときは、最後のエリアにだけボタンを表示します。
+            - 計算エリアが3つ以上のときは、ボタンを表示しません。（レイアウト崩れを防ぐために）
+        */
+        /* 基本的には被表示 */
+        .add-column-button {
+            display: none;
+        }
+        /* 最後の計算エリアにだけ表示する */
+        #columns .slt-column:nth-last-of-type(1) .add-column-button {
+            display: block;
+        }
+        /* 計算エリアが3つ以上のときはボタンを表示しない */
+        #columns .slt-column:nth-of-type(n+3) .add-column-button {
+            display: none;
+        }
     </style>
     <script>
         function calculateTimes(columnIndex) {
@@ -59,8 +77,11 @@
             newColumn.innerHTML = `
                 <div class="d-flex align-items-center mb-2">
                     <label class="form-label me-2">SLT</label>
-                    <input type="number" id="slt-${newIndex}" class="form-control me-2 slt-input" placeholder="入力">
+                    <input type="number" step="0.01" id="slt-${newIndex}" class="form-control me-2 slt-input" placeholder="入力">
                     <button class="btn btn-primary nowrap-button" onclick="calculateTimes(${newIndex})">計算する</button>
+                    <button class="btn btn-secondary ms-auto add-column-button" onclick="addColumn()">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </button>
                 </div>
                 ${generateTable(newIndex)}
             `;
@@ -82,11 +103,6 @@
                         <td>${(percent * 100).toFixed(0)}%</td>
                         <td id='${category}-${index}-${columnIndex}'>---</td>
                     </tr>`;
-                    // tableHtml += `<tr>
-                    //     <td><i class='fas ${icon} medal-icon'></i><span class='${icon.split(' ')[1]}'>${medal}</span></td>
-                    //     <td>${(percent * 100).toFixed(0)}%</td>
-                    //     <td id='${category}-${index}-${columnIndex}'>---</td>
-                    // </tr>`;
                 });
                 tableHtml += "</tbody></table></div>";
             });
@@ -96,14 +112,16 @@
 </head>
 <body class="container py-4">
     <h1 class="mb-4">SIAメダルタイム計算</h1>
-    <button class="btn btn-secondary mb-3" onclick="addColumn()">列を追加する</button>
     <div class="row" id="columns">
         <div class="col slt-column">
             <div class="d-flex align-items-center mb-2">
                 <label class="form-label me-2">SLT</label>
-                <input type="number" id="slt-1" class="form-control me-2 slt-input" placeholder="入力">
+                <input type="number" step="0.01" id="slt-1" class="form-control me-2 slt-input" placeholder="入力">
                 <button class="btn btn-primary nowrap-button" onclick="calculateTimes(1)">計算する</button>
-            </div>
+                <button class="btn btn-secondary ms-auto add-column-button" onclick="addColumn()">
+                    列を追加する
+                </button>
+                </div>
             <div id="table-container-1">
                 <script>document.write(generateTable(1));</script>
             </div>
