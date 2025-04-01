@@ -54,43 +54,111 @@
         #columns .slt-column:nth-of-type(n+3) .add-column-button {
             display: none;
         }
+
+        /* オーバーレイを表示するためのスタイル */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            font-size: 1.5rem;
+            display: none;
+        }
+
+        .spinner {
+            margin-top: 10px;
+            font-size: 2rem;
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
     <script>
-        function calculateTimes(columnIndex) {
-            let sltInput = document.getElementById(`slt-${columnIndex}`);
-            let sltValue = parseFloat(sltInput.value);
-            let percentages = {
-                '男子': [1.05, 1.15, 1.40, 1.60, 1.80],
-                '女子・小学生・50歳以上の男子': [1.10, 1.20, 1.45, 1.65, 1.85],
-                '50歳以上の女子': [1.15, 1.25, 1.50, 1.70, 1.90]
-            };
+        // すべての計算エリアに対して小数点以下の設定を適用して再計算する
+        function recalculateAll() {
+            // 計算中の表示を表示
+            showCalculating();
 
-            // 小数点以下の取り扱い方法を取得
-            let roundingMethod = document.querySelector('input[name="rounding"]:checked').value;
-
-            if (!isNaN(sltValue)) {
-                Object.keys(percentages).forEach((category, index) => {
-                    percentages[category].forEach((factor, rowIndex) => {
-                        let time = sltValue * factor;
-
-                        // 選択された丸め方法に基づいて値を処理
-                        switch(roundingMethod) {
-                            case 'floor':
-                                time = Math.floor(time * 100) / 100; // 小数点以下2桁で切り捨て
-                                break;
-                            case 'round':
-                                time = Math.round(time * 100) / 100; // 小数点以下2桁で四捨五入
-                                break;
-                            case 'ceil':
-                                time = Math.ceil(time * 100) / 100; // 小数点以下2桁で切り上げ
-                                break;
-                        }
-
-                        // 常に小数点以下2桁を表示
-                        document.getElementById(`${category}-${rowIndex}-${columnIndex}`).innerText = time.toFixed(2);
-                    });
+            // 少し遅延させて計算する（UIに反映させるため）
+            setTimeout(() => {
+                const columns = document.querySelectorAll(".slt-column");
+                columns.forEach((column, index) => {
+                    const columnIndex = index + 1;
+                    const sltInput = document.getElementById(`slt-${columnIndex}`);
+                    if (sltInput.value) {
+                        calculateTimes(columnIndex);
+                    }
                 });
-            }
+
+                // 計算中の表示を非表示にする
+                hideCalculating();
+            }, 300);
+        }
+
+        // 計算中の表示を表示する
+        function showCalculating() {
+            document.getElementById("calculating-overlay").style.display = "flex";
+        }
+
+        // 計算中の表示を非表示にする
+        function hideCalculating() {
+            document.getElementById("calculating-overlay").style.display = "none";
+        }
+
+        function calculateTimes(columnIndex) {
+            // 計算中の表示を表示
+            showCalculating();
+
+            setTimeout(() => {
+                let sltInput = document.getElementById(`slt-${columnIndex}`);
+                let sltValue = parseFloat(sltInput.value);
+                let percentages = {
+                    '男子': [1.05, 1.15, 1.40, 1.60, 1.80],
+                    '女子・小学生・50歳以上の男子': [1.10, 1.20, 1.45, 1.65, 1.85],
+                    '50歳以上の女子': [1.15, 1.25, 1.50, 1.70, 1.90]
+                };
+
+                // 小数点以下の取り扱い方法を取得
+                let roundingMethod = document.querySelector('input[name="rounding"]:checked').value;
+
+                if (!isNaN(sltValue)) {
+                    Object.keys(percentages).forEach((category, index) => {
+                        percentages[category].forEach((factor, rowIndex) => {
+                            let time = sltValue * factor;
+
+                            // 選択された丸め方法に基づいて値を処理
+                            switch(roundingMethod) {
+                                case 'floor':
+                                    time = Math.floor(time * 100) / 100; // 小数点以下2桁で切り捨て
+                                    break;
+                                case 'round':
+                                    time = Math.round(time * 100) / 100; // 小数点以下2桁で四捨五入
+                                    break;
+                                case 'ceil':
+                                    time = Math.ceil(time * 100) / 100; // 小数点以下2桁で切り上げ
+                                    break;
+                            }
+
+                            // 常に小数点以下2桁を表示
+                            document.getElementById(`${category}-${rowIndex}-${columnIndex}`).innerText = time.toFixed(2);
+                        });
+                    });
+                }
+
+                // 計算中の表示を非表示にする
+                hideCalculating();
+            }, 300); // 計算の見た目を演出するために少し遅延させる
         }
 
         function addColumn() {
@@ -135,6 +203,14 @@
             });
             return tableHtml;
         }
+
+        // ページ読み込み完了時の処理
+        document.addEventListener('DOMContentLoaded', function() {
+            // 小数点以下のラジオボタンの変更イベントを設定
+            document.querySelectorAll('input[name="rounding"]').forEach(radio => {
+                radio.addEventListener('change', recalculateAll);
+            });
+        });
     </script>
 </head>
 <body class="container py-4">
@@ -171,6 +247,12 @@
                 <script>document.write(generateTable(1));</script>
             </div>
         </div>
+    </div>
+
+    <!-- 計算中の表示用オーバーレイ -->
+    <div id="calculating-overlay" class="overlay">
+        <div>計算中</div>
+        <div class="spinner"><i class="fas fa-circle-notch"></i></div>
     </div>
 </body>
 </html>
