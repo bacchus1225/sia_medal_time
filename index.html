@@ -85,6 +85,17 @@
         }
     </style>
     <script>
+        // メダルデータを一箇所で定義（整数値で定義）
+        const medalData = {
+            'medals': ["金", "銀", "銅", "白", "青"],
+            'icons': ["fa-medal gold", "fa-medal silver", "fa-medal bronze", "fa-medal white", "fa-medal blue"],
+            'percentages': {
+                '男子': [105, 115, 140, 160, 180],
+                '女子・小学生・50歳以上の男子': [110, 120, 145, 165, 185],
+                '50歳以上の女子': [115, 125, 150, 170, 190]
+            }
+        };
+
         // すべての計算エリアに対して小数点以下の設定を適用して再計算する
         function recalculateAll() {
             // 計算中の表示を表示
@@ -123,19 +134,15 @@
             setTimeout(() => {
                 let sltInput = document.getElementById(`slt-${columnIndex}`);
                 let sltValue = parseFloat(sltInput.value);
-                let percentages = {
-                    '男子': [1.05, 1.15, 1.40, 1.60, 1.80],
-                    '女子・小学生・50歳以上の男子': [1.10, 1.20, 1.45, 1.65, 1.85],
-                    '50歳以上の女子': [1.15, 1.25, 1.50, 1.70, 1.90]
-                };
 
                 // 小数点以下の取り扱い方法を取得
                 let roundingMethod = document.querySelector('input[name="rounding"]:checked').value;
 
                 if (!isNaN(sltValue)) {
-                    Object.keys(percentages).forEach((category, index) => {
-                        percentages[category].forEach((factor, rowIndex) => {
-                            let time = sltValue * factor;
+                    Object.keys(medalData.percentages).forEach((category) => {
+                        medalData.percentages[category].forEach((percentage, rowIndex) => {
+                            // 整数のパーセンテージ値から小数に変換して計算
+                            let time = sltValue * (percentage / 100);
 
                             // 選択された丸め方法に基づいて値を処理
                             switch(roundingMethod) {
@@ -183,19 +190,14 @@
         }
 
         function generateTable(columnIndex) {
-            let categories = {
-                '男子': [["金", "fa-medal gold", 1.05], ["銀", "fa-medal silver", 1.15], ["銅", "fa-medal bronze", 1.40], ["白", "fa-medal white", 1.60], ["青", "fa-medal blue", 1.80]],
-                '女子・小学生・50歳以上の男子': [["金", "fa-medal gold", 1.10], ["銀", "fa-medal silver", 1.20], ["銅", "fa-medal bronze", 1.45], ["白", "fa-medal white", 1.65], ["青", "fa-medal blue", 1.85]],
-                '50歳以上の女子': [["金", "fa-medal gold", 1.15], ["銀", "fa-medal silver", 1.25], ["銅", "fa-medal bronze", 1.50], ["白", "fa-medal white", 1.70], ["青", "fa-medal blue", 1.90]]
-            };
             let tableHtml = "";
-            Object.keys(categories).forEach(category => {
+            Object.keys(medalData.percentages).forEach(category => {
                 tableHtml += `<div class='card'><h5 class='text-center'>${category}</h5>`;
                 tableHtml += `<table class='table table-bordered'><thead><tr><th>メダル</th><th>％</th><th>基準タイム</th></tr></thead><tbody>`;
-                categories[category].forEach(([medal, icon, percent], index) => {
+                medalData.percentages[category].forEach((percentage, index) => {
                     tableHtml += `<tr>
-                        <td><i class='fas ${icon} medal-icon'></i><span>${medal}</span></td>
-                        <td>${(percent * 100).toFixed(0)}%</td>
+                        <td><i class='fas ${medalData.icons[index]} medal-icon'></i><span>${medalData.medals[index]}</span></td>
+                        <td>${percentage}%</td>
                         <td id='${category}-${index}-${columnIndex}'>---</td>
                     </tr>`;
                 });
