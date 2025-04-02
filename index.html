@@ -132,40 +132,47 @@
             showCalculating();
 
             setTimeout(() => {
-                let sltInput = document.getElementById(`slt-${columnIndex}`);
-                let sltValue = parseFloat(sltInput.value);
-
-                // 小数点以下の取り扱い方法を取得
-                let roundingMethod = document.querySelector('input[name="rounding"]:checked').value;
-
-                if (!isNaN(sltValue)) {
-                    Object.keys(medalData.percentages).forEach((category) => {
-                        medalData.percentages[category].forEach((percentage, rowIndex) => {
-                            // 整数のパーセンテージ値から小数に変換して計算
-                            let time = sltValue * (percentage / 100);
-
-                            // 選択された丸め方法に基づいて値を処理
-                            switch(roundingMethod) {
-                                case 'floor':
-                                    time = Math.floor(time * 100) / 100; // 小数点以下2桁で切り捨て
-                                    break;
-                                case 'round':
-                                    time = Math.round(time * 100) / 100; // 小数点以下2桁で四捨五入
-                                    break;
-                                case 'ceil':
-                                    time = Math.ceil(time * 100) / 100; // 小数点以下2桁で切り上げ
-                                    break;
-                            }
-
-                            // 常に小数点以下2桁を表示
-                            document.getElementById(`${category}-${rowIndex}-${columnIndex}`).innerText = time.toFixed(2);
-                        });
-                    });
-                }
+                // 基準タイムを計算して表示
+                calculateTimesProcess(columnIndex)
 
                 // 計算中の表示を非表示にする
                 hideCalculating();
             }, 300); // 計算の見た目を演出するために少し遅延させる
+        }
+
+        function calculateTimesProcess(columnIndex) {
+            const sltInput = document.getElementById(`slt-${columnIndex}`);
+            const sltValue = parseFloat(sltInput.value);
+            if (isNaN(sltValue)) {
+                alert('SLTには数値を入力してください');
+                return;
+            }
+
+            // 小数点以下の取り扱い方法を取得
+            const roundingMethod = document.querySelector('input[name="rounding"]:checked').value;
+
+            Object.keys(medalData.percentages).forEach((category) => {
+                medalData.percentages[category].forEach((percentage, rowIndex) => {
+                    // 整数のパーセンテージ値から小数に変換して計算
+                    let time = sltValue * (percentage / 100);
+
+                    // 選択された丸め方法に基づいて値を処理
+                    switch(roundingMethod) {
+                        case 'floor':
+                            time = Math.floor(time * 100) / 100; // 小数点以下2桁で切り捨て
+                            break;
+                        case 'round':
+                            time = Math.round(time * 100) / 100; // 小数点以下2桁で四捨五入
+                            break;
+                        case 'ceil':
+                            time = Math.ceil(time * 100) / 100; // 小数点以下2桁で切り上げ
+                            break;
+                    }
+
+                    // 常に小数点以下2桁を表示
+                    document.getElementById(`${category}-${rowIndex}-${columnIndex}`).innerText = time.toFixed(2);
+                });
+            });
         }
 
         function addColumn() {
