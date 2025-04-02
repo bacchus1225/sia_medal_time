@@ -110,7 +110,7 @@
                     const columnIndex = index + 1;
                     const sltInput = document.getElementById(`slt-${columnIndex}`);
                     if (sltInput.value) {
-                        calculateTimes(columnIndex);
+                        calculateTimesProcess(columnIndex);
                     }
                 });
 
@@ -143,8 +143,7 @@
         }
 
         function calculateTimesProcess(columnIndex) {
-            const sltInput = document.getElementById(`slt-${columnIndex}`);
-            const sltValue = sltInput.value;
+            const sltValue = getSltValue(columnIndex);
 
             if (!sltValue || isNaN(parseFloat(sltValue))) {
                 alert('SLTには数値を入力してください');
@@ -213,6 +212,15 @@
                 tableHtml += "</tbody></table></div>";
             });
             return tableHtml;
+        }
+
+        /**
+            SLTを取得します。
+        */
+        function getSltValue(columnIndex) {
+            const sltInput = document.getElementById(`slt-${columnIndex}`);
+            const sltValue = sltInput.value;
+            return sltValue
         }
 
         // ページ読み込み完了時の処理
